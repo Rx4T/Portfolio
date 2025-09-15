@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Rights Act: Interactive Project Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page narrative journey, guiding the user from the core problem to the proposed solution and its impact. This thematic flow (Problem -> Solution -> Impact) was chosen over a direct report structure because it's more intuitive and engaging for a wide audience, including policymakers and NGOs. It breaks down a complex technical project into understandable, interactive components. The navigation bar facilitates non-linear exploration, while the layout uses cards and clear sections to organize information, making it easily digestible. -->
+    <!-- Visualization & Content Choices: 
+        - FRA Claim Status: Goal: Compare progress. Viz: Interactive Bar Chart (Chart.js). Interaction: Users select a district from a dropdown, which dynamically updates the chart data to show filed vs. granted claims. Justification: This provides a clear, quantitative look at the FRA implementation status and allows users to explore data for specific areas, making the data relevant to them.
+        - AI-Powered Process Flow: Goal: Organize & Explain. Viz: HTML/CSS diagram. Interaction: Hover effects on stages. Justification: A visual flow diagram simplifies the complex technical pipeline from raw data to actionable insights, making the AI's role clear and understandable.
+        - Decision Support System (DSS) Simulation: Goal: Demonstrate functionality. Viz: Interactive selection module. Interaction: User selects a "Village Profile," and the system displays recommended government schemes. Justification: This interactive simulation makes the abstract concept of a DSS tangible, showing exactly how the system connects on-the-ground data to policy action.
+        - Asset Mapping Simulation: Goal: Inform. Viz: Mock map with toggleable layers. Interaction: Checkboxes to show/hide 'assets' like water bodies and farms. Justification: This visually simulates the core feature of the WebGIS platform, allowing users to understand the concept of layered geospatial data without the complexity of a real map API.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #404040;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #166534;
+            border-bottom-color: #166534;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .tab-btn.active {
+            background-color: #166534;
+            color: #ffffff;
+        }
+        .tab-btn {
+            transition: all 0.3s ease-in-out;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .asset-layer {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-stone-50">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-green-800">FRA <span class="font-light">Vision</span></div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#challenge" class="nav-link pb-1">The Challenge</a>
+                <a href="#solution" class="nav-link pb-1">Our Solution</a>
+                <a href="#atlas" class="nav-link pb-1">FRA Atlas</a>
+                <a href="#impact" class="nav-link pb-1">Impact</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                     <span class="text-3xl">☰</span>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-2">
+            <a href="#challenge" class="block nav-link">The Challenge</a>
+            <a href="#solution" class="block nav-link">Our Solution</a>
+            <a href="#atlas" class="block nav-link">FRA Atlas</a>
+            <a href="#impact" class="block nav-link">Impact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-green-50/50">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-green-900 leading-tight">Unlocking Tribal Potential</h1>
+                <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">A unified AI-driven platform to manage Forest Rights, map community assets, and empower forest-dwelling communities through targeted development.</p>
+                <a href="#challenge" class="mt-8 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-green-800 transition-transform transform hover:scale-105">Explore the Project</a>
+            </div>
+        </section>
+
+        <section id="challenge" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">The Core Challenge</h2>
+                    <p class="mt-2 text-gray-500 max-w-2xl mx-auto">Forest Rights Act implementation is hindered by fragmented data and a lack of integrated tools, preventing communities from realizing their full potential.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100 fade-in">
+                        <div class="text-4xl text-amber-600 mb-4">🗃️</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Scattered Legacy Data</h3>
+                        <p class="text-gray-500">Individual and Community Forest Rights records are non-digitized, physically scattered, and difficult to access or verify, creating massive administrative hurdles.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100 fade-in" style="animation-delay: 0.2s;">
+                        <div class="text-4xl text-sky-600 mb-4">🗺️</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Visual Repository</h3>
+                        <p class="text-gray-500">There is no centralized, real-time map or "FRA Atlas" to visualize the location and status of claims, granted titles, and community forest resources.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100 fade-in" style="animation-delay: 0.4s;">
+                         <div class="text-4xl text-red-600 mb-4">🔗</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Disconnected Development</h3>
+                        <p class="text-gray-500">Decision-makers cannot layer development schemes effectively onto FRA areas, leading to missed opportunities for targeted welfare and economic upliftment.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">A Four-Pillar Solution</h2>
+                    <p class="mt-2 text-gray-500 max-w-2xl mx-auto">We propose an integrated system that leverages AI and geospatial technology to overcome these challenges, creating a seamless flow from data to decision-making.</p>
+                </div>
+
+                <div class="flex justify-center mb-8 space-x-2 md:space-x-4">
+                    <button class="tab-btn px-4 py-2 text-sm md:text-base font-semibold rounded-full active" data-tab="digitization">1. Data Digitization</button>
+                    <button class="tab-btn px-4 py-2 text-sm md:text-base font-semibold rounded-full" data-tab="mapping">2. AI Asset Mapping</button>
+                    <button class="tab-btn px-4 py-2 text-sm md:text-base font-semibold rounded-full" data-tab="dss">3. Decision Support</button>
+                </div>
+
+                <div class="bg-white p-6 md:p-10 rounded-xl shadow-lg border border-gray-100 min-h-[450px]">
+                    <div id="digitization" class="tab-content active">
+                        <h3 class="text-2xl font-bold text-green-800 mb-4">AI-Powered Data Digitization</h3>
+                        <p class="text-gray-600 mb-8">This foundational step transforms paper-based legacy records into a structured, searchable digital archive. We use advanced AI models to read, understand, and categorize information from thousands of scanned documents, ensuring accuracy and creating a robust database for the entire system.</p>
+                        <div class="flex flex-col md:flex-row items-center justify-around space-y-6 md:space-y-0 md:space-x-4 text-center">
+                           <div class="flex flex-col items-center">
+                                <div class="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center text-4xl">📄</div>
+                                <p class="mt-2 font-semibold">Scanned FRA Docs</p>
+                                <p class="text-sm text-gray-500">Input Raw Images</p>
+                           </div>
+                           <div class="text-3xl font-light text-gray-400">→</div>
+                           <div class="flex flex-col items-center">
+                                <div class="w-24 h-24 bg-sky-100 rounded-full flex items-center justify-center text-4xl">🤖</div>
+                                <p class="mt-2 font-semibold">OCR & NER Models</p>
+                                <p class="text-sm text-gray-500">Extract & Structure</p>
+                           </div>
+                           <div class="text-3xl font-light text-gray-400">→</div>
+                           <div class="flex flex-col items-center">
+                                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-4xl">💾</div>
+                                <p class="mt-2 font-semibold">Digital Archive</p>
+                                <p class="text-sm text-gray-500">Verified & Searchable</p>
+                           </div>
+                        </div>
+                    </div>
+
+                    <div id="mapping" class="tab-content">
+                        <h3 class="text-2xl font-bold text-green-800 mb-4">AI-Based Asset Mapping</h3>
+                         <p class="text-gray-600 mb-6">Using high-resolution satellite imagery and computer vision, we automatically identify and map key assets within FRA villages. This provides an unprecedented, data-rich view of the natural resources and infrastructure available to communities, forming the visual backbone of the FRA Atlas.</p>
+                        <div class="flex flex-col lg:flex-row gap-8">
+                            <div class="flex-grow bg-gray-200 rounded-lg p-4 h-80 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://placehold.co/800x600/a3be8c/4c566a?text=Base+Satellite+Map');"></div>
+                                <div id="water-layer" class="asset-layer absolute inset-0 bg-blue-500/30 opacity-0"></div>
+                                <div id="forest-layer" class="asset-layer absolute inset-0 bg-green-700/30 opacity-0"></div>
+                                <div id="farms-layer" class="asset-layer absolute inset-0 bg-yellow-500/30 opacity-0"></div>
+                                <div class="absolute bottom-2 left-2 bg-white/70 backdrop-blur-sm p-2 rounded">Village Asset View</div>
+                            </div>
+                            <div class="flex-shrink-0 lg:w-1/3">
+                                <h4 class="font-semibold mb-3">Toggle Asset Layers</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center space-x-3 bg-white p-3 rounded-md border cursor-pointer"><input type="checkbox" data-layer="water-layer" class="form-checkbox h-5 w-5 text-blue-600 rounded"><span>Water Bodies</span></label>
+                                    <label class="flex items-center space-x-3 bg-white p-3 rounded-md border cursor-pointer"><input type="checkbox" data-layer="forest-layer" class="form-checkbox h-5 w-5 text-green-600 rounded"><span>Forest Cover</span></label>
+                                    <label class="flex items-center space-x-3 bg-white p-3 rounded-md border cursor-pointer"><input type="checkbox" data-layer="farms-layer" class="form-checkbox h-5 w-5 text-yellow-600 rounded"><span>Agricultural Land</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="dss" class="tab-content">
+                        <h3 class="text-2xl font-bold text-green-800 mb-4">Decision Support System (DSS)</h3>
+                        <p class="text-gray-600 mb-6">The DSS is the intelligence engine that connects data to action. It analyzes the mapped assets and socio-economic data to recommend the most suitable Central Sector Schemes (CSS) for each FRA holder or village, enabling precise and impactful development planning.</p>
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <div class="flex-1">
+                                <label for="village-profile-selector" class="font-semibold block mb-2 text-gray-700">Select a Village Profile:</label>
+                                <select id="village-profile-selector" class="w-full p-3 border rounded-md bg-white shadow-sm focus:ring-2 focus:ring-green-500">
+                                    <option value="default" selected disabled>-- Choose a scenario --</option>
+                                    <option value="water">Low water table, high agri-potential</option>
+                                    <option value="livelihood">Rich in minor forest produce</option>
+                                    <option value="infra">Poor road connectivity</option>
+                                </select>
+                            </div>
+                            <div class="flex-1 md:mt-8">
+                                <div id="dss-recommendations" class="bg-green-50 p-4 rounded-lg min-h-[150px]">
+                                    <p class="text-gray-500">Recommended schemes will appear here...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="atlas" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Interactive FRA Atlas Dashboard</h2>
+                    <p class="mt-2 text-gray-500 max-w-2xl mx-auto">This central dashboard provides a comprehensive overview of FRA implementation. Use the filters to explore claim status data across different districts, visualizing progress and identifying areas needing attention.</p>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <div class="flex-1">
+                            <label for="district-filter" class="text-sm font-medium text-gray-600">Filter by District</label>
+                            <select id="district-filter" class="w-full mt-1 p-2 border rounded-md bg-gray-50 shadow-sm focus:ring-2 focus:ring-green-500">
+                                <option value="gadchiroli">Gadchiroli</option>
+                                <option value="nandurbar">Nandurbar</option>
+                                <option value="koraput">Koraput</option>
+                                <option value="sundargarh">Sundargarh</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 flex-1">
+                            <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                <span class="text-2xl md:text-3xl font-bold text-blue-800" id="stats-filed">0</span>
+                                <p class="text-sm text-blue-700">Claims Filed</p>
+                            </div>
+                             <div class="bg-green-50 p-4 rounded-lg text-center">
+                                <span class="text-2xl md:text-3xl font-bold text-green-800" id="stats-granted">0</span>
+                                <p class="text-sm text-green-700">Pattas Granted</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="fraChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact" class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Project Impact & Deliverables</h2>
+                    <p class="mt-2 text-gray-500 max-w-2xl mx-auto">This initiative will create tangible tools and data assets that directly benefit a wide range of stakeholders, from national ministries to local communities.</p>
+                </div>
+                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <div class="text-4xl mb-4">🗄️</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Digital FRA Archive</h3>
+                        <p class="text-gray-500">A fully searchable, AI-processed digital repository of all FRA claims and decisions.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <div class="text-4xl mb-4">🌐</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Interactive FRA Atlas</h3>
+                        <p class="text-gray-500">A WebGIS platform for visualizing rights, assets, and administrative boundaries.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                         <div class="text-4xl mb-4">🛰️</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">AI-Generated Asset Maps</h3>
+                        <p class="text-gray-500">Detailed maps of land use, water bodies, and infrastructure for all FRA villages.</p>
+                    </div>
+                     <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                         <div class="text-4xl mb-4">💡</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">DSS for Scheme Layering</h3>
+                        <p class="text-gray-500">An intelligent engine to guide policy and ensure targeted scheme delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="bg-green-900 text-white py-12">
+            <div class="container mx-auto px-6 text-center">
+                <h3 class="text-2xl font-bold">Future Scope</h3>
+                <p class="mt-2 max-w-2xl mx-auto text-green-200">The platform is designed for future growth, including real-time satellite monitoring, IoT integration for soil and water data, and mobile-based feedback from communities.</p>
+                 <div class="mt-6 text-sm text-green-300">
+                    <p>&copy; 2025 FRA Vision Project. A conceptual dashboard for the Ministry of Tribal Affairs.</p>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4,
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelector(link.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if(mobileMenu.classList.contains('hidden') === false){
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const fraData = {
+                gadchiroli: { filed: 18500, granted: 11200 },
+                nandurbar: { filed: 15200, granted: 9800 },
+                koraput: { filed: 21500, granted: 13500 },
+                sundargarh: { filed: 19800, granted: 15100 }
+            };
+
+            const statsFiled = document.getElementById('stats-filed');
+            const statsGranted = document.getElementById('stats-granted');
+            const districtFilter = document.getElementById('district-filter');
+            const ctx = document.getElementById('fraChart').getContext('2d');
+            let fraChart;
+
+            function updateDashboard(district) {
+                const data = fraData[district];
+                statsFiled.textContent = data.filed.toLocaleString();
+                statsGranted.textContent = data.granted.toLocaleString();
+                
+                if (fraChart) {
+                    fraChart.data.datasets[0].data = [data.filed, data.granted];
+                    fraChart.update();
+                }
+            }
+
+            function initChart() {
+                const initialDistrict = districtFilter.value;
+                const initialData = fraData[initialDistrict];
+                
+                fraChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Claims Filed', 'Pattas Granted'],
+                        datasets: [{
+                            label: 'Total Claims',
+                            data: [initialData.filed, initialData.granted],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.6)',
+                                'rgba(16, 185, 129, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(16, 185, 129, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: '#e5e7eb'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ` ${context.dataset.label}: ${context.raw.toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                updateDashboard(initialDistrict);
+            }
+
+            districtFilter.addEventListener('change', (e) => {
+                updateDashboard(e.target.value);
+            });
+            
+            initChart();
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(button.dataset.tab).classList.add('active');
+                });
+            });
+
+            const assetToggles = document.querySelectorAll('input[data-layer]');
+            assetToggles.forEach(toggle => {
+                toggle.addEventListener('change', () => {
+                    const layer = document.getElementById(toggle.dataset.layer);
+                    if (toggle.checked) {
+                        layer.style.opacity = '1';
+                    } else {
+                        layer.style.opacity = '0';
+                    }
+                });
+            });
+            
+            const dssSelector = document.getElementById('village-profile-selector');
+            const dssRecommendations = document.getElementById('dss-recommendations');
+            const dssData = {
+                water: `<h5>Recommended Schemes:</h5><ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-700"><li><b>Jal Jeevan Mission:</b> For community wells and piped water supply.</li><li><b>PM-KSY:</b> For micro-irrigation projects.</li></ul>`,
+                livelihood: `<h5>Recommended Schemes:</h5><ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-700"><li><b>Van Dhan Vikas Kendra:</b> For value addition to minor forest produce.</li><li><b>MGNREGA:</b> For sustainable livelihood projects.</li></ul>`,
+                infra: `<h5>Recommended Schemes:</h5><ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-700"><li><b>PM Gram Sadak Yojana:</b> For all-weather road connectivity.</li><li><b>DAJGUA Schemes:</b> For comprehensive tribal village development.</li></ul>`,
+                default: `<p class="text-gray-500">Recommended schemes will appear here...</p>`
+            };
+
+            dssSelector.addEventListener('change', () => {
+                dssRecommendations.innerHTML = dssData[dssSelector.value] || dssData.default;
+            });
+
+        });
+    </script>
+</body>
+</html>
