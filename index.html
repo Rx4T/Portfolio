@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nayan | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00BFFF;
+            --dark-bg: #111;
+            --light-text: #F0F0F0;
+            --glow-color: rgba(0, 191, 255, 0.7);
+            --font-family: 'Orbitron', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(17, 17, 17, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        header .logo a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--light-text);
+            position: relative;
+            font-weight: 600;
+        }
+        nav a::after {
+            content: "";
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--primary-color);
+            transition: width 0.3s ease-in-out;
+        }
+        nav a:hover::after, nav a:focus::after { width: 100%; }
+
+        /* HERO */
+        #hero {
+            text-align: center;
+            padding: 5rem 1rem;
+        }
+        .hero-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        .hero-subtitle { margin: 1rem 0; }
+        .cta-button {
+            display: inline-block;
+            border: 2px solid var(--primary-color);
+            padding: 0.7rem 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            background: var(--primary-color);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        /* ABOUT */
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .about-content img {
+            width: 220px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        .about-text { flex: 1; }
+        .about-text h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* PROJECT */
+        .project-card {
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        iframe {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 15px var(--glow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        iframe:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px var(--glow-color);
+        }
+
+        /* SKILLS */
+        .skill-item { margin-bottom: 1rem; }
+        .skill-bar {
+            background: #333;
+            border: 1px solid var(--primary-color);
+            height: 15px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .skill-level {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), #0066cc);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid #333;
+            font-size: 0.9rem;
+        }
+
+        @media(max-width: 768px) {
+            .about-content { flex-direction: column; text-align: center; }
+            .about-text { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo"><a href="#hero">NAYAN</a></div>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero">
+        <h1 class="hero-title">Learning & Growing,<br>One Line of Code at a Time.</h1>
+        <p class="hero-subtitle">Welcome to my journey as a first-year student exploring technology.</p>
+        <a href="#projects" class="cta-button">View My Work</a>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="container">
+        <h2 class="section-title">ABOUT ME</h2>
+        <div class="about-content">
+            <img src="Gemini_Generated_Image_c32we9c32we9c32w.png" alt="Nayan Profile Photo">
+            <div class="about-text">
+                <h3>👨‍💻 Hi, I'm Nayan</h3>
+                <p>I’m a <strong>First-Year B.Tech Student at RTMNU</strong>, currently learning programming, web development, and problem-solving.</p>
+                <p><strong>Interests:</strong> Web Development, Programming Basics.</p>
+                <p><strong>Currently Learning:</strong> C, HTML, CSS, JavaScript fundamentals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="container">
+        <h2 class="section-title">PROJECTS</h2>
+        <article class="project-card">
+            <h3>Mini Project: FRA Vision Dashboard</h3>
+            <p>A simple interactive dashboard designed for Smart India Hackathon (SIH) that visualizes Forest Rights Act (FRA) data.</p>
+            <p><strong>Tech Stack:</strong> HTML | CSS | Tailwind | Chart.js</p>
+            <div class="project-links">
+                <a href="SIH.html">🔗 Live Preview</a>
+                <a href="SIH.html" download>⬇ Download Project</a>
+            </div>
+            <iframe src="SIH.html"></iframe>
+        </article>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="container">
+        <h2 class="section-title">MY SKILLS</h2>
+        <div class="skill-item">
+            <span>HTML5 (Beginner)</span>
+            <div class="skill-bar"><div class="skill-level" style="width:30%;"></div></div>
+        </div>
+        <div class="skill-item">
+            <span>CSS3 (Beginner)</span>
+            <div class="skill-bar"><div class="skill-level" style="width:25%;"></div></div>
+        </div>
+        <div class="skill-item">
+            <span>JavaScript (Basics)</span>
+            <div class="skill-bar"><div class="skill-level" style="width:15%;"></div></div>
+        </div>
+        <div class="skill-item">
+            <span>C Programming</span>
+            <div class="skill-bar"><div class="skill-level" style="width:20%;"></div></div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="container">
+        <h2 class="section-title">CONTACT ME</h2>
+        <p style="text-align:center;">Email: <strong>nayan@example.com</strong></p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2025 Nayan | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>
